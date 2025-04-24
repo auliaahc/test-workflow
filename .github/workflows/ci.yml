@@ -10,22 +10,30 @@ jobs:
   build-apk-flutter:
     name: 📱 Check Build Flutter APK
     runs-on: ubuntu-latest
+
     steps:
     - name: 🧹 Checkout Repository
       uses: actions/checkout@v3
+
     - name: ☕ Setup Java 17
       uses: actions/setup-java@v3
       with:
         distribution: 'oracle'
         java-version: '17'
-    - name: 🐦 Setup Flutter on Stable Channel
-      uses: subosito/flutter-action@v2
-      with:
-        channel: 'stable'
+
+    - name: 🐦 Install FVM & Flutter Version
+      run: |
+        dart pub global activate fvm
+        echo "$HOME/.pub-cache/bin" >> $GITHUB_PATH
+        fvm install
+        fvm flutter --version
+
     - name: 📦 Get Flutter Dependencies
-      run: flutter pub get
+      run: fvm flutter pub get
+
     - name: 🏗️ Build Release APK
-      run: flutter build apk
+      run: fvm flutter build apk
+
     - name: 📤 Upload APK Artifact
       uses: actions/upload-artifact@v4
       with:
